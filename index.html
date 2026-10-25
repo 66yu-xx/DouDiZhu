@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>斗地主</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="viewport">
+  <div id="stage">
+    <!-- 顶栏 -->
+    <div id="topbar">
+      <div class="logo"><div class="logo-card"><span>♠</span></div><div class="logo-text">斗地主</div><div class="logo-sub">欢乐三人局</div></div>
+      <div class="round-info">
+        <span class="chip">第 <b id="infoRound">1</b> 局</span>
+        <span class="chip">底分 <b id="infoBase">10</b></span>
+        <span class="chip">倍数 <b id="infoMult">×1</b></span>
+        <span class="chip" id="infoMode">叫分</span>
+      </div>
+      <div class="top-btns">
+        <button class="tbtn" id="btnCounter">🂠 记牌器</button>
+        <button class="tbtn" id="btnNew">⟳ 新游戏</button>
+        <button class="tbtn" id="btnHelp">📖 规则</button>
+        <button class="tbtn" id="btnSettings">⚙ 设置</button>
+        <button class="tbtn icon" id="btnSound" title="静音">🔊</button>
+      </div>
+    </div>
+
+    <!-- 牌桌 -->
+    <div id="table">
+      <div class="felt-emblem">斗 地 主</div>
+      <div id="bottomCards" class="bottom-cards"><div class="bc-label">底牌</div><div class="bc-row" id="bcRow"></div></div>
+      <div id="counter" class="counter"></div>
+
+      <!-- 左家（座位 2） -->
+      <div class="seat seat-left" id="seat2">
+        <div class="badge" id="badge2"></div>
+        <div class="stack" id="stack2"></div>
+      </div>
+      <!-- 右家（座位 1） -->
+      <div class="seat seat-right" id="seat1">
+        <div class="badge" id="badge1"></div>
+        <div class="stack" id="stack1"></div>
+      </div>
+      <!-- 自己 -->
+      <div class="badge badge-me" id="badge0"></div>
+
+      <div class="play-zone" id="zone2"></div>
+      <div class="play-zone" id="zone1"></div>
+      <div class="play-zone" id="zone0"></div>
+      <div class="reveal" id="reveal2"></div>
+      <div class="reveal" id="reveal1"></div>
+
+      <div id="status" class="status"></div>
+      <div id="actions" class="actions"></div>
+      <div id="hand" class="hand"></div>
+      <div id="fx" class="fx"></div>
+      <div id="toasts"></div>
+    </div>
+
+    <!-- 开始界面 -->
+    <div id="startScreen" class="overlay show">
+      <div class="start-card">
+        <div class="start-deco" id="startDeco"></div>
+        <h1>斗 地 主</h1>
+        <p class="start-sub">经典三人扑克 · 你与两位电脑对战</p>
+        <div class="start-opts">
+          <div class="opt"><span>叫地主方式</span><div class="seg" data-key="bidMode"><button data-v="score">叫分（1/2/3 分）</button><button data-v="grab">抢地主</button></div></div>
+          <div class="opt"><span>电脑速度</span><div class="seg" data-key="speed"><button data-v="1.5">慢</button><button data-v="1">中</button><button data-v="0.55">快</button></div></div>
+          <div class="opt"><span>语音报牌</span><div class="seg" data-key="voice"><button data-v="1">开</button><button data-v="0">关</button></div></div>
+          <div class="opt"><span>记牌器</span><div class="seg" data-key="counter"><button data-v="1">显示</button><button data-v="0">隐藏</button></div></div>
+        </div>
+        <button class="big-btn primary" id="btnStart">开 始 游 戏</button>
+        <p class="start-tip">点击或拖动选牌 · 右键出牌 · 「提示」可循环可出的牌</p>
+      </div>
+    </div>
+
+    <!-- 结算 -->
+    <div id="settle" class="overlay">
+      <div class="settle-card">
+        <div class="settle-ribbon" id="settleRibbon">胜 利</div>
+        <div class="settle-who" id="settleWho"></div>
+        <div class="settle-body">
+          <div class="mult-list" id="multList"></div>
+          <div class="settle-right">
+            <div class="mult-total"><div class="lbl">总 倍 数</div><div class="num" id="multTotal">×1</div><div class="formula" id="multFormula"></div></div>
+            <div class="score-table" id="scoreTable"></div>
+          </div>
+        </div>
+        <div class="settle-btns"><button class="big-btn" id="btnSettleView">查看牌局</button><button class="big-btn primary" id="btnNext">再来一局 ▶</button></div>
+      </div>
+    </div>
+    <button id="btnBackToSettle" class="float-btn">返回结算</button>
+
+    <!-- 规则 -->
+    <div id="help" class="overlay">
+      <div class="panel-card wide">
+        <div class="panel-head"><h2>规则说明</h2><button class="close" data-close="help">✕</button></div>
+        <div class="panel-body" id="helpBody"></div>
+      </div>
+    </div>
+
+    <!-- 设置 -->
+    <div id="settings" class="overlay">
+      <div class="panel-card">
+        <div class="panel-head"><h2>设置</h2><button class="close" data-close="settings">✕</button></div>
+        <div class="panel-body settings-body">
+          <div class="opt"><span>叫地主方式</span><div class="seg" data-key="bidMode"><button data-v="score">叫分</button><button data-v="grab">抢地主</button></div></div>
+          <div class="opt"><span>底分</span><div class="seg" data-key="base"><button data-v="1">1</button><button data-v="10">10</button><button data-v="100">100</button></div></div>
+          <div class="opt"><span>明牌（×2）</span><div class="seg" data-key="ming"><button data-v="1">允许</button><button data-v="0">关闭</button></div></div>
+          <div class="opt"><span>电脑速度</span><div class="seg" data-key="speed"><button data-v="1.5">慢</button><button data-v="1">中</button><button data-v="0.55">快</button></div></div>
+          <div class="opt"><span>出牌计时</span><div class="seg" data-key="timer"><button data-v="0">不计时</button><button data-v="15">15 秒</button><button data-v="30">30 秒</button></div></div>
+          <div class="opt"><span>记牌器</span><div class="seg" data-key="counter"><button data-v="1">显示</button><button data-v="0">隐藏</button></div></div>
+          <div class="opt"><span>语音报牌</span><div class="seg" data-key="voice"><button data-v="1">开</button><button data-v="0">关</button></div></div>
+          <div class="opt"><span>报牌声音</span><div class="voice-row"><select id="voiceSel" class="voice-sel"></select><button class="mini-btn" id="btnVoiceTest">试听</button></div></div>
+          <div class="opt"><span>语音音量</span><div class="voice-row"><input type="range" id="voiceVol" min="0" max="100" step="5"><b id="voiceVolTxt" class="vol-txt">85%</b></div></div>
+          <div class="opt"><span>音效</span><div class="seg" data-key="sound"><button data-v="1">开</button><button data-v="0">关</button></div></div>
+          <p class="note">叫地主方式与底分从下一局开始生效；其余设置立即生效。</p>
+          <div class="settings-btns"><button class="big-btn primary" data-close="settings">完成</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 确认框 -->
+    <div id="confirm" class="overlay">
+      <div class="panel-card small">
+        <div class="panel-body"><p id="confirmText"></p>
+          <div class="settings-btns"><button class="big-btn" id="confirmNo">取消</button><button class="big-btn primary" id="confirmYes">确定</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="js/rules.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/game.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
